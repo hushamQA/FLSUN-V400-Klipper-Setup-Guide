@@ -17,4 +17,4 @@ Complete Klipper + Moonraker + Mainsail + KlipperScreen + OrcaSlicer setup and c
 
 ## Credit
 
-Based on the official [Guilouz/Klipper-Flsun-Speeder-Pad](https://github.com/Guilouz/Klipper-Flsun-Speeder-Pad) configs and [wiki](https://github.com/Guilouz/Klipper-Flsun-Speeder-Pad/wiki), documented as a personal from-scratch install log with additional troubleshooting notes.
+Based on the official [Guilouz/Klipper-Flsun-Speeder-Pad](https://github.com/Guilouz/Klipper-Flsun-Speeder-Pad) configs and [wiki](https://github.com/Guilouz/Klipper-Flsun-Speeder-Pad/wiki). This guide was written after the original install steps repeatedly failed on this unit due to package/dependency conflicts and version incompatibilities — it documents the working sequence that resolved them, as a supplementary path for anyone hitting the same issues.
