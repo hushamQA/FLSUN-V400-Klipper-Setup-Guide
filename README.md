@@ -1,81 +1,20 @@
-# FLSUN V400 — Config Files
+# FLSUN V400 — Klipper Setup Guide
 
-Ready-to-copy configuration, service, and system files matching the [wiki guide](../../wiki). Use this folder for a faster setup instead of typing every file out by hand from the wiki pages.
+Complete Klipper + Moonraker + Mainsail + KlipperScreen + OrcaSlicer setup and calibration guide for the FLSUN V400 delta printer.
 
-> ⚠️ These files were captured from one specific FLSUN V400 build (GD32F303 clone mainboard, Ubuntu 20.04 Speeder Pad). Anything mechanically specific to that unit — calibration numbers in `printer.cfg`, the exact mainboard/MCU in `klipper-build.config` — is an **example, not a value to copy blindly**. See the warnings inside each file.
+📖 **Full guide: [Wiki](https://github.com/hushamQA/FLSUN-V400-Klipper-Setup-Guide/wiki)**
 
-## Quick Start
+## Contents
 
-```bash
-# 1. Copy this folder to the printer
-scp -r config/ pi@<printer-ip>:~/conf
+- [Home / Overview](https://github.com/hushamQA/FLSUN-V400-Klipper-Setup-Guide/wiki/Home)
+- [1. Installation](https://github.com/hushamQA/FLSUN-V400-Klipper-Setup-Guide/wiki/01-Installation)
+- [2. Configuration Files](https://github.com/hushamQA/FLSUN-V400-Klipper-Setup-Guide/wiki/02-Configuration-Files)
+- [3. OrcaSlicer Settings](https://github.com/hushamQA/FLSUN-V400-Klipper-Setup-Guide/wiki/03-OrcaSlicer-Settings)
+- [4. Calibration](https://github.com/hushamQA/FLSUN-V400-Klipper-Setup-Guide/wiki/04-Calibration)
+- [5. Filament Profiles](https://github.com/hushamQA/FLSUN-V400-Klipper-Setup-Guide/wiki/05-Filament-Profiles)
+- [6. Extensions](https://github.com/hushamQA/FLSUN-V400-Klipper-Setup-Guide/wiki/06-Extensions)
+- [7. Troubleshooting](https://github.com/hushamQA/FLSUN-V400-Klipper-Setup-Guide/wiki/07-Troubleshooting)
 
-# 2. Run the setup script (installs Klipper/Moonraker/Mainsail/KlipperScreen,
-#    deploys these config files, applies the sdbus patch and PolicyKit rules)
-ssh pi@<printer-ip> "TIMEZONE='Region/City' bash ~/conf/setup.sh"
+## Credit
 
-# 3. Compile and flash firmware — NOT automated, see setup.sh output for the exact commands.
-#    Verify your mainboard/MCU matches klipper-build.config before flashing.
-
-# 4. Edit ~/printer_data/config/moonraker.conf and set your own sudo_password
-```
-
-For the full explanation of every step, see the [wiki](../../wiki) — this folder is the copy-paste companion to it, not a replacement.
-
-## Files reference
-
-### Config files (deployed to `~/printer_data/config/`)
-
-| File | Description |
-|------|-------------|
-| `printer.cfg` | Main printer config. Calibration block at the bottom is an **example only** — run your own calibration (wiki page 4) |
-| `macros.cfg` | All G-code macros (START_PRINT, PAUSE, RESUME, calibration shortcuts, etc.) |
-| `moonraker.conf` | Moonraker API server config — set your own `sudo_password` before use |
-| `KlipperScreen.conf` | KlipperScreen UI config (preheat presets, LED menu entries) |
-| `neopixels.cfg` | NeoPixel LED macros and temperature/progress display templates |
-| `timelapse.cfg` | Timelapse extension macros (upstream file from mainsail-crew, GPLv3) |
-| `variables.cfg` | Saved variables — Z persistence intentionally disabled for safety |
-| `moonraker.asvc` | Allowed services list for Moonraker |
-
-### systemd/ (deployed to `/etc/systemd/system/`)
-
-| File | Description |
-|------|-------------|
-| `klipper.service` | Klipper systemd unit |
-| `moonraker.service` | Moonraker systemd unit |
-| `KlipperScreen.service` | KlipperScreen systemd unit |
-| `patch-ks-sdbus.service` | Runs the sdbus compatibility patch before KlipperScreen starts |
-
-### system/
-
-| File | Destination | Description |
-|------|-------------|-------------|
-| `mainsail-nginx.conf` | `/etc/nginx/sites-enabled/mainsail` | Nginx reverse proxy for Mainsail + Moonraker API |
-| `10-moonraker.pkla` | `/etc/polkit-1/localauthority/50-local.d/` | PolicyKit rules for restart/shutdown from Mainsail |
-| `patch-ks-sdbus.sh` | `/usr/local/bin/` | Patches KlipperScreen for libsystemd 245 (Ubuntu 20.04) compatibility |
-| `ks-post-merge-hook.sh` | `~/KlipperScreen/.git/hooks/post-merge` | Re-applies the sdbus patch after every KlipperScreen update |
-
-### Other
-
-| File | Description |
-|------|-------------|
-| `klipper-build.config` | `make menuconfig` output for a GD32F303 clone board reporting as STM32F103. Copy to `~/klipper/.config` before `make` — **verify against your own mainboard first** |
-| `setup.sh` | Automated install script — installs the full stack and deploys every file above |
-
-## Not included here — on purpose
-
-| Not included | Why |
-|---|---|
-| Precompiled firmware `.bin` | Firmware is tied to one exact mainboard/MCU revision and its encryption. Flashing the wrong binary onto a different board revision can brick it. Compile your own from `klipper-build.config` after verifying your board (see Installation §6 in the wiki) |
-| WiFi/network export files | Contain a real SSID and connection UUID specific to one network — not portable or useful to another user |
-
-## Calibration values shown in `printer.cfg`
-
-The auto-generated `SAVE_CONFIG` block is kept as a reference for what a completed block looks like, not as a value to copy:
-
-- Delta radius, arm lengths, tower angles, endstop positions — unique per-unit mechanical measurements
-- Probe Z-offset — unique to your probe and nozzle
-- Input shaper frequencies — unique to your frame/belt/mass characteristics
-- Bed mesh — unique to your bed's physical surface
-
-Run the full sequence in [4. Calibration](../../wiki/04-Calibration) to generate your own.
+Based on the official [Guilouz/Klipper-Flsun-Speeder-Pad](https://github.com/Guilouz/Klipper-Flsun-Speeder-Pad) configs and [wiki](https://github.com/Guilouz/Klipper-Flsun-Speeder-Pad/wiki). This guide was written after the original install steps repeatedly failed on this unit due to package/dependency conflicts and version incompatibilities — it documents the working sequence that resolved them, as a supplementary path for anyone hitting the same issues.
